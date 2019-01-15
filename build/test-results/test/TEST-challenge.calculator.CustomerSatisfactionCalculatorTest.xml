@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="challenge.calculator.CustomerSatisfactionCalculatorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2019-01-15T01:33:19" hostname="Jeffreys-MacBook-Pro.local" time="0.005">
-  <properties/>
-  <testcase name="testGetRating" classname="challenge.calculator.CustomerSatisfactionCalculatorTest" time="0.005"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
