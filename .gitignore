@@ -1,0 +1,7 @@
+.gradle
+/build/
+/gradle/
+.project
+.DS_Store
+
+drone-delivery-output.txt
