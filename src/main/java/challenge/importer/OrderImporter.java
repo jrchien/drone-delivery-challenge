@@ -48,7 +48,7 @@ public final class OrderImporter {
   }
 
   /**
-   * Parses a String into an {@link Order}. Expects the String to be in the format: 
+   * Parses a String into an {@link Order}. Expects the String to be in the format:
    * <p>
    * ID Coordinate Time
    * 

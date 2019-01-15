@@ -41,7 +41,8 @@ public class ScheduleProblem implements Problem<ISeq<Order>, EnumGene<Order>, In
 
   @Override
   public Function<ISeq<Order>, Integer> fitness() {
-    return seq -> NPSCalculator.getNPS(OrderScheduler.basicSchedule(warehouseLocation, seq.asList()));
+    return seq -> NPSCalculator
+        .getNPS(OrderScheduler.basicSchedule(warehouseLocation, seq.asList()));
   }
 
   @Override

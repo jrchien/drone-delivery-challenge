@@ -13,14 +13,14 @@ public class CustomerSatisfactionCalculatorTest {
     LocalTime neutralLowerBorderTime = orderTime.plusHours(2);
     LocalTime neutralUpperBorderTime = orderTime.plusHours(4);
 
-    Assert.assertEquals(CustomerSatisfaction.PROMOTER,
-        CustomerSatisfactionCalculator.getRating(orderTime, neutralLowerBorderTime.minusMinutes(1)));
+    Assert.assertEquals(CustomerSatisfaction.PROMOTER, CustomerSatisfactionCalculator
+        .getRating(orderTime, neutralLowerBorderTime.minusMinutes(1)));
     Assert.assertEquals(CustomerSatisfaction.NEUTRAL,
         CustomerSatisfactionCalculator.getRating(orderTime, neutralLowerBorderTime));
     Assert.assertEquals(CustomerSatisfaction.DETRACTOR,
         CustomerSatisfactionCalculator.getRating(orderTime, neutralUpperBorderTime));
-    Assert.assertEquals(CustomerSatisfaction.NEUTRAL,
-        CustomerSatisfactionCalculator.getRating(orderTime, neutralLowerBorderTime.minusMinutes(1), 15));
+    Assert.assertEquals(CustomerSatisfaction.NEUTRAL, CustomerSatisfactionCalculator
+        .getRating(orderTime, neutralLowerBorderTime.minusMinutes(1), 15));
   }
 
 }

@@ -62,8 +62,9 @@ public final class OrderScheduler {
       Engine<EnumGene<Order>, Integer> engine = Engine.builder(scheduleProblem)
           .executor(Executors.newFixedThreadPool(5)).maximizing().build();
 
-      Phenotype<EnumGene<Order>, Integer> result = engine.stream().limit(Limits.bySteadyFitness(100))
-          .limit(1000).collect(EvolutionResult.toBestPhenotype());
+      Phenotype<EnumGene<Order>, Integer> result =
+          engine.stream().limit(Limits.bySteadyFitness(100)).limit(1000)
+              .collect(EvolutionResult.toBestPhenotype());
 
       return basicSchedule(warehouseLocation, result.getGenotype().getChromosome().stream()
           .map(EnumGene::getAllele).collect(Collectors.toList()));
@@ -80,11 +81,10 @@ public final class OrderScheduler {
    * @param orders The {@link Order} list.
    * @return The resulting {@link Delivery} list.
    */
-  public static final List<Delivery> basicSchedule(
-      List<Order> orders) {
+  public static final List<Delivery> basicSchedule(List<Order> orders) {
     return basicSchedule(GridCoordinate.ZERO, orders);
   }
-  
+
   /**
    * Schedules based on iteration order. If an order will not complete by the
    * {@link OrderScheduler#END_TIME}, creates an incomplete delivery entry.
