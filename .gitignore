@@ -1,8 +1,16 @@
+### Eclipse ###
+.metadata
+bin/
+.settings/
+.classpath
+.project
+
+### Gradle ###
 .gradle
 /build/
-/gradle/
-/bin/
-.project
+
+### macOS ###
 .DS_Store
 
+### Project Specific ###
 drone-delivery-output.txt
