@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="challenge.importer.OrderImporterTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2019-01-15T01:33:19" hostname="Jeffreys-MacBook-Pro.local" time="0.147">
+  <properties/>
+  <testcase name="testValidLineContent" classname="challenge.importer.OrderImporterTest" time="0.131"/>
+  <testcase name="testInvalidPath" classname="challenge.importer.OrderImporterTest" time="0.003"/>
+  <testcase name="testNullLine" classname="challenge.importer.OrderImporterTest" time="0.0"/>
+  <testcase name="testInvalidLineContent" classname="challenge.importer.OrderImporterTest" time="0.003"/>
+  <testcase name="testValidTestFile" classname="challenge.importer.OrderImporterTest" time="0.007"/>
+  <testcase name="testLineColumnCount" classname="challenge.importer.OrderImporterTest" time="0.0"/>
+  <system-out><![CDATA[2019-01-14 20:33:19 [OrderImporter] ERROR - Unable to read file at path: src/test/resources.
+2019-01-14 20:33:19 [OrderParser] ERROR - Order Id (Test) does not match format 'WM[0-9]{4}'
+2019-01-14 20:33:19 [OrderParser] ERROR - Order Time (Test) does not match format 'HH:mm:ss'
+2019-01-14 20:33:19 [OrderParser] ERROR - Order Time (Test) does not match format 'HH:mm:ss'
+2019-01-14 20:33:19 [OrderParser] ERROR - Order Time (Test) does not match format 'HH:mm:ss'
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

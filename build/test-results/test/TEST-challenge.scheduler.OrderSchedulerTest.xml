@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="challenge.scheduler.OrderSchedulerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2019-01-15T01:33:19" hostname="Jeffreys-MacBook-Pro.local" time="0.509">
+  <properties/>
+  <testcase name="testNull" classname="challenge.scheduler.OrderSchedulerTest" time="0.01"/>
+  <testcase name="testBestFit" classname="challenge.scheduler.OrderSchedulerTest" time="0.496"/>
+  <testcase name="testBasicSchedule" classname="challenge.scheduler.OrderSchedulerTest" time="0.003"/>
+  <system-out><![CDATA[2019-01-14 20:33:19 [OrderScheduler] ERROR - Warehouse location null and orders cannot be null.
+2019-01-14 20:33:19 [OrderScheduler] ERROR - Cannot schedule with a null warehouse location or empty list of orders.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
