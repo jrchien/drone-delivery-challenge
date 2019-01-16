@@ -39,7 +39,7 @@ public final class DeliveryExporter {
    */
   public static final String exportToFile(List<Delivery> deliveries) {
     if (deliveries != null && !deliveries.isEmpty()) {
-      Collections.sort(deliveries, (a, b) -> a.getDepartureTime().compareTo(b.getDepartureTime()));
+      Collections.sort(deliveries);
       File file = new File(FILE_PATH);
       try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
         deliveries.stream().map(DeliveryExporter::toLine)

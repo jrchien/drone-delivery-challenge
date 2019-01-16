@@ -4,12 +4,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import com.google.common.base.Preconditions;
-import challenge.calculator.CustomerSatisfactionCalculator;
 import challenge.model.CustomerSatisfaction;
 import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
-import challenge.model.Order;
+import challenge.model.Scheduled;
 
 /**
  * A basic {@link OrderScheduler} that schedules deliveries in the same order that the orders come
@@ -30,30 +28,25 @@ public class FifoOrderScheduler extends OrderScheduler {
   }
 
   @Override
-  public List<Delivery> schedule(List<Order> orders) {
-    Preconditions.checkNotNull(orders, "Orders cannot be null.");
-    Preconditions.checkArgument(!orders.isEmpty(), "Orders cannot be empty.");
-
+  public List<Delivery> scheduleDeliveries(List<Scheduled> scheduledList) {
     List<Delivery> deliveries = new ArrayList<>();
     List<Delivery> incomplete = new ArrayList<>();
 
     LocalTime currentTime = getStartTime();
-    Iterator<Order> orderIterator = orders.iterator();
-    while (orderIterator.hasNext()) {
-      Order order = orderIterator.next();
-      if (!order.getOrderTime().isBefore(getEndTime())) {
-        incomplete.add(incompleteDelivery(order));
+    Iterator<Scheduled> scheduledIterator = scheduledList.iterator();
+    while (scheduledIterator.hasNext()) {
+      Scheduled scheduled = scheduledIterator.next();
+      if (!scheduled.getOrderTime().isBefore(getEndTime())) {
+        incomplete.add(incompleteDelivery(scheduled.getOrderId()));
       } else {
-        currentTime = laterTime(currentTime, order.getOrderTime());
-        int transitMinutes = getWarehouseLocation().getDistanceTo(order.getCustomerLocation());
-        LocalTime completionTime = currentTime.plusMinutes(transitMinutes * 2);
-        if (completionTime.isBefore(getEndTime())) {
-          CustomerSatisfaction rating = CustomerSatisfactionCalculator
-              .getRating(order.getOrderTime(), currentTime, transitMinutes);
-          deliveries.add(new Delivery(order.getOrderId(), currentTime, rating));
+        currentTime = laterTime(currentTime, scheduled.getOrderTime());
+        LocalTime completionTime = scheduled.getCompletionTime(currentTime);
+        if (!completionTime.isAfter(getEndTime())) {
+          CustomerSatisfaction rating = scheduled.getRating(currentTime);
+          deliveries.add(new Delivery(scheduled.getOrderId(), currentTime, rating));
           currentTime = completionTime;
         } else {
-          incomplete.add(incompleteDelivery(order));
+          incomplete.add(incompleteDelivery(scheduled.getOrderId()));
         }
       }
     }

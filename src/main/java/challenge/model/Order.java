@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
  * 
  * @author jeffrey
  */
-public final class Order {
+public final class Order implements Comparable<Order> {
 
   private final String orderId;
 
@@ -19,7 +19,7 @@ public final class Order {
   /**
    * The constructor.
    * 
-   * @param orderId The ID for the order. Cannot be <code>null</code>.
+   * @param orderId The id for the order. Cannot be <code>null</code>.
    * @param orderTime The time the order was placed. Cannot be <code>null</code>.
    * @param customerLocation The grid-based location to deliver to. Cannot be <code>null</code>.
    */
@@ -34,7 +34,7 @@ public final class Order {
   }
 
   /**
-   * @return The order ID.
+   * @return The order id.
    */
   public String getOrderId() {
     return orderId;
@@ -52,6 +52,11 @@ public final class Order {
    */
   public GridCoordinate getCustomerLocation() {
     return customerLocation;
+  }
+
+  @Override
+  public int compareTo(Order other) {
+    return getOrderTime().compareTo(other.getOrderTime());
   }
 
   @Override

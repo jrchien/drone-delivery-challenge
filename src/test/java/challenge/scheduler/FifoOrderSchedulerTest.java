@@ -67,11 +67,11 @@ public class FifoOrderSchedulerTest {
    * Imports the test files and compares the expected NPS to the actual.
    */
   @Test
-  public void testBestFit() {
+  public void testFifo() {
     Map<String, Integer> testInputMap = new HashMap<>();
     testInputMap.put("src/test/resources/test-input-1.txt", 50);
     testInputMap.put("src/test/resources/test-input-2.txt", -12);
-    testInputMap.put("src/test/resources/test-input-3.txt", -22);
+    testInputMap.put("src/test/resources/test-input-3.txt", 10);
 
     testInputMap.entrySet().stream().forEach(entry -> testFifo(entry.getKey(), entry.getValue()));
   }

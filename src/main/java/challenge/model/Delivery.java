@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
  * 
  * @author jeffrey
  */
-public class Delivery {
+public class Delivery implements Comparable<Delivery> {
 
   private final String orderId;
 
@@ -52,6 +52,11 @@ public class Delivery {
    */
   public CustomerSatisfaction getRating() {
     return rating;
+  }
+
+  @Override
+  public int compareTo(Delivery other) {
+    return this.getDepartureTime().compareTo(other.getDepartureTime());
   }
 
   @Override

@@ -2,11 +2,13 @@ package challenge.scheduler;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 import challenge.model.CustomerSatisfaction;
 import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
 import challenge.model.Order;
+import challenge.model.Scheduled;
 
 /**
  * Handles the scheduling of the {@link Order}s and conversion into {@link Delivery}.
@@ -33,13 +35,27 @@ public abstract class OrderScheduler {
   }
 
   /**
-   * Schedules deliveries from the orders. If an order will not complete by the
+   * Parses the orders into a scheduled list. If an order will not complete by the
    * {@link OrderSchedulers#END_TIME}, creates an incomplete delivery entry.
    * 
-   * @param orders The {@link Order} list.
+   * @param orders The {@link Order} list. Cannot be <code>null</code> or empty.
    * @return The resulting {@link Delivery} list.
    */
-  public abstract List<Delivery> schedule(List<Order> orders);
+  public final List<Delivery> schedule(List<Order> orders) {
+    Preconditions.checkNotNull(orders, "Orders cannot be null.");
+    Preconditions.checkArgument(!orders.isEmpty(), "Orders cannot be empty.");
+
+    return scheduleDeliveries(orders.stream().map(order -> new Scheduled(order, warehouseLocation))
+        .collect(Collectors.toList()));
+  }
+
+  /**
+   * Schedules the deliveries based on the {@link Scheduled} list.
+   * 
+   * @param scheduledList The {@link Scheduled} list.
+   * @return The resulting {@link Delivery} list.
+   */
+  public abstract List<Delivery> scheduleDeliveries(List<Scheduled> scheduledList);
 
   /**
    * @return The warehouse {@link GridCoordinate} used to calculate distance. Cannot be
@@ -71,17 +87,17 @@ public abstract class OrderScheduler {
    * @return The later time.
    */
   protected final LocalTime laterTime(LocalTime firstTime, LocalTime secondTime) {
-    return firstTime.isBefore(secondTime) ? secondTime : firstTime;
+    return firstTime.isAfter(secondTime) ? firstTime : secondTime;
   }
 
   /**
    * Creates an incomplete {@link Delivery} at {@link LocalTime#MAX} with a
    * {@link CustomerSatisfaction#DETRACTOR} rating.
    * 
-   * @param order The {@link Order}.
+   * @param orderId The order id.
    * @return The incomplete {@link Delivery}.
    */
-  protected final Delivery incompleteDelivery(Order order) {
-    return new Delivery(order.getOrderId(), LocalTime.MAX, CustomerSatisfaction.DETRACTOR);
+  protected final Delivery incompleteDelivery(String orderId) {
+    return new Delivery(orderId, LocalTime.MAX, CustomerSatisfaction.DETRACTOR);
   }
 }
