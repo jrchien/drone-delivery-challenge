@@ -73,8 +73,6 @@ public final class DeliveryExporter {
     stringBuilder.append(delivery.getOrderId());
     stringBuilder.append(DELIMITER);
     stringBuilder.append(OrderParser.formatOrderTime(delivery.getDepartureTime()));
-    stringBuilder.append(DELIMITER);
-    stringBuilder.append(delivery.getRating());
     return stringBuilder.toString();
   }
 

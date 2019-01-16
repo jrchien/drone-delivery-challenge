@@ -9,7 +9,7 @@
 
 ### Executing Tests
 ```
-./gradlew test --tests 'challenge.*'
+./gradlew test
 ```
 
 ### Build Instructions

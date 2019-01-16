@@ -7,6 +7,7 @@ import challenge.calculator.NPSCalculator;
 import challenge.model.GridCoordinate;
 import challenge.model.Order;
 import challenge.scheduler.OrderScheduler;
+import challenge.scheduler.OrderSchedulers;
 import io.jenetics.EnumGene;
 import io.jenetics.engine.Codec;
 import io.jenetics.engine.Codecs;
@@ -21,9 +22,9 @@ import io.jenetics.util.ISeq;
  */
 public class ScheduleProblem implements Problem<ISeq<Order>, EnumGene<Order>, Integer> {
 
-  private final GridCoordinate warehouseLocation;
-
   private final ISeq<Order> orderSequence;
+
+  private final OrderScheduler orderScheduler;
 
   /**
    * The constructor.
@@ -35,14 +36,13 @@ public class ScheduleProblem implements Problem<ISeq<Order>, EnumGene<Order>, In
     Preconditions.checkNotNull(warehouseLocation, "Warehouse location cannot be null.");
     Preconditions.checkNotNull(orders, "Orders cannot be null.");
 
-    this.warehouseLocation = warehouseLocation;
+    this.orderScheduler = OrderSchedulers.fifo(warehouseLocation);
     this.orderSequence = ISeq.of(orders);
   }
 
   @Override
   public Function<ISeq<Order>, Integer> fitness() {
-    return seq -> NPSCalculator
-        .getNPS(OrderScheduler.basicSchedule(warehouseLocation, seq.asList()));
+    return seq -> NPSCalculator.getNPS(orderScheduler.schedule(seq.asList()));
   }
 
   @Override

@@ -1,130 +1,87 @@
 package challenge.scheduler;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import challenge.calculator.CustomerSatisfactionCalculator;
-import challenge.jenetics.ScheduleProblem;
+import com.google.common.base.Preconditions;
 import challenge.model.CustomerSatisfaction;
 import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
 import challenge.model.Order;
-import io.jenetics.EnumGene;
-import io.jenetics.Phenotype;
-import io.jenetics.engine.Engine;
-import io.jenetics.engine.EvolutionResult;
-import io.jenetics.engine.Limits;
 
 /**
  * Handles the scheduling of the {@link Order}s and conversion into {@link Delivery}.
  * 
  * @author jeffrey
  */
-public final class OrderScheduler {
-
-  private static final Logger LOG = LoggerFactory.getLogger(OrderScheduler.class);
+public abstract class OrderScheduler {
 
   private static final LocalTime START_TIME = LocalTime.of(6, 0);
 
   private static final LocalTime END_TIME = LocalTime.of(22, 0);
 
-  private OrderScheduler() {}
+  private final GridCoordinate warehouseLocation;
 
   /**
-   * Equivalent to calling {@link OrderScheduler#bestFitSchedule(GridCoordinate, List)} with
-   * {@link GridCoordinate#ZERO}
+   * The constructor.
+   * 
+   * @param warehouseLocation The warehouse {@link GridCoordinate} used to calculate distance.
+   *        Cannot be <code>null</code>.
+   */
+  public OrderScheduler(GridCoordinate warehouseLocation) {
+    Preconditions.checkNotNull(warehouseLocation, "The warehouse location cannot be null.");
+    this.warehouseLocation = warehouseLocation;
+  }
+
+  /**
+   * Schedules deliveries from the orders. If an order will not complete by the
+   * {@link OrderSchedulers#END_TIME}, creates an incomplete delivery entry.
    * 
    * @param orders The {@link Order} list.
    * @return The resulting {@link Delivery} list.
    */
-  public static final List<Delivery> bestFitSchedule(List<Order> orders) {
-    return bestFitSchedule(GridCoordinate.ZERO, orders);
+  public abstract List<Delivery> schedule(List<Order> orders);
+
+  /**
+   * @return The warehouse {@link GridCoordinate} used to calculate distance. Cannot be
+   *         <code>null</code>.
+   */
+  public final GridCoordinate getWarehouseLocation() {
+    return warehouseLocation;
   }
 
   /**
-   * Uses Jenetics to determine the best fit schedule.
-   * 
-   * @param warehouseLocation The {@link GridCoordinate} of the warehouse.
-   * @param orders The {@link Order} list.
-   * @return The resulting {@link Delivery} list.
+   * @return The start time for scheduling.
    */
-  public static final List<Delivery> bestFitSchedule(GridCoordinate warehouseLocation,
-      List<Order> orders) {
-    if (warehouseLocation != null && orders != null) {
-      ScheduleProblem scheduleProblem = new ScheduleProblem(warehouseLocation, orders);
-
-      Engine<EnumGene<Order>, Integer> engine = Engine.builder(scheduleProblem)
-          .executor(Executors.newFixedThreadPool(5)).maximizing().build();
-
-      Phenotype<EnumGene<Order>, Integer> result =
-          engine.stream().limit(Limits.bySteadyFitness(100)).limit(1000)
-              .collect(EvolutionResult.toBestPhenotype());
-
-      return basicSchedule(warehouseLocation, result.getGenotype().getChromosome().stream()
-          .map(EnumGene::getAllele).collect(Collectors.toList()));
-    } else {
-      LOG.error("Cannot schedule with a null warehouse location or empty list of orders.");
-      return Collections.emptyList();
-    }
+  public LocalTime getStartTime() {
+    return START_TIME;
   }
 
   /**
-   * Equivalent to calling {@link OrderScheduler#basicSchedule(GridCoordinate, List)} with
-   * {@link GridCoordinate#ZERO}
-   * 
-   * @param orders The {@link Order} list.
-   * @return The resulting {@link Delivery} list.
+   * @return The end time for scheduling.
    */
-  public static final List<Delivery> basicSchedule(List<Order> orders) {
-    return basicSchedule(GridCoordinate.ZERO, orders);
+  public LocalTime getEndTime() {
+    return END_TIME;
   }
 
   /**
-   * Schedules based on iteration order. If an order will not complete by the
-   * {@link OrderScheduler#END_TIME}, creates an incomplete delivery entry.
+   * Compares the two times and returns the later of the two.
    * 
-   * @param warehouseLocation The {@link GridCoordinate} of the warehouse.
-   * @param orders The {@link Order} list.
-   * @return The resulting {@link Delivery} list.
+   * @param firstTime The first time.
+   * @param secondTime The second time.
+   * @return The later time.
    */
-  public static final List<Delivery> basicSchedule(GridCoordinate warehouseLocation,
-      List<Order> orders) {
-    List<Delivery> deliveries = new ArrayList<>();
-
-    if (warehouseLocation != null && orders != null) {
-      LocalTime currentTime = START_TIME;
-      Iterator<Order> orderIterator = orders.iterator();
-      while (orderIterator.hasNext() && currentTime.isBefore(END_TIME)) {
-        Order order = orderIterator.next();
-        int transitMinutes = warehouseLocation.getDistanceTo(order.getCustomerLocation());
-        LocalTime completionTime = currentTime.plusMinutes(transitMinutes * 2);
-        if (completionTime.isBefore(END_TIME)) {
-          CustomerSatisfaction rating = CustomerSatisfactionCalculator
-              .getRating(order.getOrderTime(), currentTime, transitMinutes);
-          deliveries.add(new Delivery(order.getOrderId(), currentTime, rating));
-        } else {
-          deliveries.add(incompleteDelivery(order));
-        }
-        currentTime = completionTime;
-      }
-      while (orderIterator.hasNext()) {
-        Order order = orderIterator.next();
-        deliveries.add(incompleteDelivery(order));
-      }
-    } else {
-      LOG.error("Warehouse location {} and orders cannot be null.", warehouseLocation);
-    }
-    return deliveries;
+  protected final LocalTime laterTime(LocalTime firstTime, LocalTime secondTime) {
+    return firstTime.isBefore(secondTime) ? secondTime : firstTime;
   }
 
-  private static final Delivery incompleteDelivery(Order order) {
+  /**
+   * Creates an incomplete {@link Delivery} at {@link LocalTime#MAX} with a
+   * {@link CustomerSatisfaction#DETRACTOR} rating.
+   * 
+   * @param order The {@link Order}.
+   * @return The incomplete {@link Delivery}.
+   */
+  protected final Delivery incompleteDelivery(Order order) {
     return new Delivery(order.getOrderId(), LocalTime.MAX, CustomerSatisfaction.DETRACTOR);
   }
-
 }
