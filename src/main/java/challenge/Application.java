@@ -20,18 +20,22 @@ public class Application {
 
   /**
    * The main method.
+   * <p>
+   * <li>Takes in a single file path as an argument.
+   * <li>Imports the orders from the file.
+   * <li>Schedules the deliveries.
+   * <li>Prints out the exported file path.
    * 
    * @param args The program arguments.
    */
   public static void main(String[] args) {
     if (args.length != 1) {
       LOG.error("Expects file path.");
-      System.exit(1);
+    } else {
+      List<Order> orders = OrderImporter.parseFile(args[0]);
+      List<Delivery> deliveries = OrderSchedulers.bestFit().schedule(orders);
+      System.out.println(DeliveryExporter.exportToFile(deliveries));
     }
-
-    List<Order> orders = OrderImporter.parseFile(args[0]);
-    List<Delivery> deliveries = OrderSchedulers.bestFit().schedule(orders);
-    System.out.println(DeliveryExporter.exportToFile(deliveries));
     System.exit(1);
   }
 
