@@ -51,4 +51,24 @@ public final class OrderSchedulers {
     return new FifoOrderScheduler(warehouseLocation);
   }
 
+  /**
+   * Equivalent to calling {@link OrderSchedulers#queueBased(GridCoordinate)} with
+   * {@link GridCoordinate#ZERO}
+   * 
+   * @return The {@link QueueOrderScheduler}.
+   */
+  public static final OrderScheduler queueBased() {
+    return queueBased(GridCoordinate.ZERO);
+  }
+
+  /**
+   * Creates a new instance of {@link QueueOrderScheduler}.
+   * 
+   * @param warehouseLocation The {@link GridCoordinate} of the warehouse.
+   * @return The {@link QueueOrderScheduler}.
+   */
+  public static final OrderScheduler queueBased(GridCoordinate warehouseLocation) {
+    return new QueueOrderScheduler(warehouseLocation);
+  }
+
 }

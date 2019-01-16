@@ -33,7 +33,7 @@ public class Application {
       LOG.error("Expects file path.");
     } else {
       List<Order> orders = OrderImporter.parseFile(args[0]);
-      List<Delivery> deliveries = OrderSchedulers.bestFit().schedule(orders);
+      List<Delivery> deliveries = OrderSchedulers.queueBased().schedule(orders);
       System.out.println(DeliveryExporter.exportToFile(deliveries));
     }
     System.exit(1);

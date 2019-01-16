@@ -12,14 +12,14 @@ import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
 import challenge.model.Order;
 
-public class BestFitOrderSchedulerTest {
+public class QueueOrderSchedulerTest {
 
   /**
    * Passing in a <code>null</code> warehouse {@link GridCoordinate}.
    */
   @Test(expected = NullPointerException.class)
   public void testNullWarehouse() {
-    OrderSchedulers.bestFit(null);
+    OrderSchedulers.queueBased(null);
   }
 
   /**
@@ -27,7 +27,8 @@ public class BestFitOrderSchedulerTest {
    */
   @Test(expected = NullPointerException.class)
   public void testNullOrders() {
-    OrderSchedulers.bestFit().schedule(null);
+    new FifoOrderScheduler(null);
+    OrderSchedulers.queueBased().schedule(null);
   }
 
   /**
@@ -35,27 +36,29 @@ public class BestFitOrderSchedulerTest {
    */
   @Test(expected = IllegalArgumentException.class)
   public void testEmptyOrders() {
-    OrderSchedulers.bestFit().schedule(Collections.emptyList());
+    OrderSchedulers.queueBased().schedule(Collections.emptyList());
   }
 
   /**
    * Imports the test files and compares the expected NPS to the actual.
    */
   @Test
-  public void testBestFit() {
-    Map<String, Integer> testMap = new HashMap<>();
-    testMap.put("src/test/resources/test-input-1.txt", 75);
-    testMap.put("src/test/resources/test-input-2.txt", 50);
+  public void testQueueBased() {
+    Map<String, Integer> testInputMap = new HashMap<>();
+    testInputMap.put("src/test/resources/test-input-1.txt", 75);
+    testInputMap.put("src/test/resources/test-input-2.txt", 50);
+    testInputMap.put("src/test/resources/test-input-3.txt", 65);
 
-    testMap.entrySet().stream().forEach(entry -> testBestFit(entry.getKey(), entry.getValue()));
+    testInputMap.entrySet().stream()
+        .forEach(entry -> testQueueBased(entry.getKey(), entry.getValue()));
   }
 
-  private void testBestFit(String filePath, int expectedNPS) {
+  private void testQueueBased(String filePath, int expectedNPS) {
     List<Order> orders = OrderImporter.parseFile(filePath);
-    List<Delivery> deliveries = OrderSchedulers.bestFit().schedule(orders);
+    List<Delivery> deliveries = OrderSchedulers.queueBased().schedule(orders);
     Assert.assertEquals("All orders must be scheduled for delivery.", orders.size(),
         deliveries.size());
-    Assert.assertEquals(String.format("Best fit NPS should be %d.", expectedNPS), expectedNPS,
+    Assert.assertEquals(String.format("Queue Based NPS should be %d.", expectedNPS), expectedNPS,
         NPSCalculator.getNPS(deliveries));
   }
 

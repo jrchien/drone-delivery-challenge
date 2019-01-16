@@ -3,11 +3,11 @@ package challenge.scheduler;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-import com.google.common.base.Preconditions;
 import challenge.jenetics.ScheduleProblem;
 import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
 import challenge.model.Order;
+import challenge.model.Scheduled;
 import io.jenetics.EnumGene;
 import io.jenetics.LinearRankSelector;
 import io.jenetics.Phenotype;
@@ -35,23 +35,20 @@ public final class BestFitOrderScheduler extends FifoOrderScheduler {
   }
 
   @Override
-  public List<Delivery> schedule(List<Order> orders) {
-    Preconditions.checkNotNull(orders, "Orders cannot be null.");
-    Preconditions.checkArgument(!orders.isEmpty(), "Orders cannot be empty.");
+  public List<Delivery> scheduleDeliveries(List<Scheduled> scheduledList) {
+    int minimumGeneration = MINIMUM_GENERATION_FACTOR * scheduledList.size();
+    ScheduleProblem scheduleProblem = new ScheduleProblem(getWarehouseLocation(), scheduledList);
 
-    int minimumGeneration = MINIMUM_GENERATION_FACTOR * orders.size();
-    ScheduleProblem scheduleProblem = new ScheduleProblem(getWarehouseLocation(), orders);
-
-    Engine<EnumGene<Order>, Integer> engine =
+    Engine<EnumGene<Scheduled>, Integer> engine =
         Engine.builder(scheduleProblem).executor(Executors.newCachedThreadPool()).maximizing()
             .offspringSelector(new LinearRankSelector<>())
             .survivorsSelector(new LinearRankSelector<>()).build();
 
-    Phenotype<EnumGene<Order>, Integer> result =
+    Phenotype<EnumGene<Scheduled>, Integer> result =
         engine.stream().limit(Limits.bySteadyFitness(minimumGeneration))
             .limit(minimumGeneration * 2).collect(EvolutionResult.toBestPhenotype());
 
-    return super.schedule(result.getGenotype().getChromosome().stream().map(EnumGene::getAllele)
+    return super.scheduleDeliveries(result.getGenotype().getChromosome().stream().map(EnumGene::getAllele)
         .collect(Collectors.toList()));
   }
 

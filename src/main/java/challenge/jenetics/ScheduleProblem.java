@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import challenge.calculator.NPSCalculator;
 import challenge.model.GridCoordinate;
 import challenge.model.Order;
+import challenge.model.Scheduled;
 import challenge.scheduler.OrderScheduler;
 import challenge.scheduler.OrderSchedulers;
 import io.jenetics.EnumGene;
@@ -20,9 +21,9 @@ import io.jenetics.util.ISeq;
  * 
  * @author jeffrey
  */
-public class ScheduleProblem implements Problem<ISeq<Order>, EnumGene<Order>, Integer> {
+public class ScheduleProblem implements Problem<ISeq<Scheduled>, EnumGene<Scheduled>, Integer> {
 
-  private final ISeq<Order> orderSequence;
+  private final ISeq<Scheduled> orderSequence;
 
   private final OrderScheduler orderScheduler;
 
@@ -32,7 +33,7 @@ public class ScheduleProblem implements Problem<ISeq<Order>, EnumGene<Order>, In
    * @param warehouseLocation The warehouse {@link GridCoordinate}. Cannot be <code>null</code>.
    * @param orders The list of {@link Order}s used for generations. Cannot be <code>null</code>.
    */
-  public ScheduleProblem(GridCoordinate warehouseLocation, List<Order> orders) {
+  public ScheduleProblem(GridCoordinate warehouseLocation, List<Scheduled> orders) {
     Preconditions.checkNotNull(warehouseLocation, "Warehouse location cannot be null.");
     Preconditions.checkNotNull(orders, "Orders cannot be null.");
 
@@ -41,12 +42,12 @@ public class ScheduleProblem implements Problem<ISeq<Order>, EnumGene<Order>, In
   }
 
   @Override
-  public Function<ISeq<Order>, Integer> fitness() {
-    return seq -> NPSCalculator.getNPS(orderScheduler.schedule(seq.asList()));
+  public Function<ISeq<Scheduled>, Integer> fitness() {
+    return seq -> NPSCalculator.getNPS(orderScheduler.scheduleDeliveries(seq.asList()));
   }
 
   @Override
-  public Codec<ISeq<Order>, EnumGene<Order>> codec() {
+  public Codec<ISeq<Scheduled>, EnumGene<Scheduled>> codec() {
     return Codecs.ofPermutation(orderSequence);
   }
 

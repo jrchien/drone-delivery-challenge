@@ -29,6 +29,21 @@ public class OrderTest {
   }
 
   /**
+   * Tests order time comparison.
+   */
+  @Test
+  public void testComparable() {
+    Order order = new Order("Test", LocalTime.NOON, GridCoordinate.ZERO);
+    Order sameTime = new Order("Test", LocalTime.NOON, GridCoordinate.of(5, 6));
+    Order laterTime = new Order("Test", LocalTime.NOON.plusMinutes(1), GridCoordinate.ZERO);
+    Order earlierTime = new Order("Test", LocalTime.NOON.minusMinutes(1), GridCoordinate.ZERO);
+
+    Assert.assertEquals("Same time.", 0, order.compareTo(sameTime));
+    Assert.assertEquals("Later time.", -1, order.compareTo(laterTime));
+    Assert.assertEquals("Earlier time.", 1, order.compareTo(earlierTime));
+  }
+
+  /**
    * Tests the equals method.
    */
   @SuppressWarnings("unlikely-arg-type")
