@@ -1,5 +1,6 @@
 package challenge.scheduler;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,36 +9,33 @@ import org.junit.Test;
 import challenge.calculator.NPSCalculator;
 import challenge.importer.OrderImporter;
 import challenge.model.Delivery;
+import challenge.model.GridCoordinate;
 import challenge.model.Order;
 
-/**
- * Tests the scheduling to ensure it is ordering the deliveries properly.
- * 
- * @author jeffrey
- */
-public class OrderSchedulerTest {
+public class BestFitOrderSchedulerTest {
 
   /**
-   * Passing in a null argument should result in an empty list.
+   * Passing in a <code>null</code> warehouse {@link GridCoordinate}.
    */
-  @Test
-  public void testNull() {
-    Assert.assertTrue("Null check basic schedule.",
-        OrderScheduler.basicSchedule(null, null).isEmpty());
-    Assert.assertTrue("Null check best fit schedule.",
-        OrderScheduler.bestFitSchedule(null, null).isEmpty());
+  @Test(expected = NullPointerException.class)
+  public void testNullWarehouse() {
+    OrderSchedulers.bestFit(null);
   }
 
   /**
-   * Tests the basic scheduling to ensure it creates deliveries based on iteration order.
+   * Passing <code>null</code> {@link Order}s.
    */
-  @Test
-  public void testBasicSchedule() {
-    List<Order> orders = OrderImporter.parseFile("src/test/resources/test-input-2.txt");
-    List<Delivery> deliveries = OrderScheduler.basicSchedule(orders);
-    Assert.assertEquals("All orders must be scheduled for delivery.", orders.size(),
-        deliveries.size());
-    Assert.assertEquals("Basic NPS is -12.", -12, NPSCalculator.getNPS(deliveries));
+  @Test(expected = NullPointerException.class)
+  public void testNullOrders() {
+    OrderSchedulers.bestFit().schedule(null);
+  }
+
+  /**
+   * Passing empty {@link Order}s.
+   */
+  @Test(expected = IllegalArgumentException.class)
+  public void testEmptyOrders() {
+    OrderSchedulers.bestFit().schedule(Collections.emptyList());
   }
 
   /**
@@ -48,13 +46,14 @@ public class OrderSchedulerTest {
     Map<String, Integer> testMap = new HashMap<>();
     testMap.put("src/test/resources/test-input-1.txt", 75);
     testMap.put("src/test/resources/test-input-2.txt", 50);
+    testMap.put("src/test/resources/test-input-3.txt", 44);
 
     testMap.entrySet().stream().forEach(entry -> testBestFit(entry.getKey(), entry.getValue()));
   }
 
   private void testBestFit(String filePath, int expectedNPS) {
     List<Order> orders = OrderImporter.parseFile(filePath);
-    List<Delivery> deliveries = OrderScheduler.bestFitSchedule(orders);
+    List<Delivery> deliveries = OrderSchedulers.bestFit().schedule(orders);
     Assert.assertEquals("All orders must be scheduled for delivery.", orders.size(),
         deliveries.size());
     Assert.assertEquals(String.format("Best fit NPS should be %d.", expectedNPS), expectedNPS,

@@ -4,7 +4,6 @@ import java.time.LocalTime;
 import org.junit.Assert;
 import org.junit.Test;
 import challenge.model.GridCoordinate;
-import challenge.parser.OrderParser;
 
 /**
  * Tests order field parsing validation to avoid issues with invalid entries.

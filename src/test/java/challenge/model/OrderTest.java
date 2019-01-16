@@ -1,6 +1,7 @@
 package challenge.model;
 
 import java.time.LocalTime;
+import java.util.Random;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,6 +11,8 @@ import org.junit.Test;
  * @author jeffrey
  */
 public class OrderTest {
+
+  private static final Random RANDOM = new Random();
 
   /**
    * Tests basic instantiation and getters.
@@ -56,5 +59,58 @@ public class OrderTest {
     Assert.assertEquals("Compare toString.",
         "Order [orderId=Test, orderTime=12:00, customerLocation=GridCoordinate [x=0, y=0]]",
         order.toString());
+  }
+
+  /**
+   * Generates a valid order id.
+   * 
+   * @return The generated order id.
+   */
+  public static final String generateOrderId() {
+    return generateOrderId(RANDOM.nextInt(1000));
+  }
+
+  /**
+   * Generates a valid order id.
+   * 
+   * @param idNumber The id number to use.
+   * @return The generated order id.
+   */
+  public static final String generateOrderId(int idNumber) {
+    return String.format("WM%04d", idNumber);
+  }
+
+  /**
+   * Generates an order time.
+   * 
+   * @return The generated order time.
+   */
+  public static final LocalTime generateOrderTime() {
+    return LocalTime.MIN.plusSeconds(RANDOM.nextLong());
+  }
+
+  /**
+   * Generates an {@link Order} with a grid coordinate in the range.
+   * 
+   * @param idNumber The id number to use.
+   * @param xMax The maximum x coordinate.
+   * @param yMax The maximum y coordinate.
+   * @return The generated order.
+   */
+  public static final Order generateOrder(int idNumber, int xMax, int yMax) {
+    return generateOrder(generateOrderId(idNumber), xMax, yMax);
+  }
+
+  /**
+   * Generates an {@link Order} with the id and with a grid coordinate in the range.
+   * 
+   * @param id Order ID.
+   * @param xMax The maximum x coordinate.
+   * @param yMax The maximum y coordinate.
+   * @return The generated order.
+   */
+  public static final Order generateOrder(String id, int xMax, int yMax) {
+    return new Order(id, generateOrderTime(),
+        GridCoordinate.of(RANDOM.nextInt(xMax + 1), RANDOM.nextInt(yMax + 1)));
   }
 }

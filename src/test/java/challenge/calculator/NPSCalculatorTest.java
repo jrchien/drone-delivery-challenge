@@ -1,9 +1,9 @@
 package challenge.calculator;
 
-import static challenge.exporter.DeliveryExporterTest.generateDeliveries;
 import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Test;
+import challenge.model.DeliveryTest;
 
 /**
  * Tests the Net Promoter Score (NPS) calculation.
@@ -33,16 +33,18 @@ public final class NPSCalculatorTest {
    */
   @Test
   public void testNPSCalculation() {
-    Assert.assertEquals("Only promotors.", 100, NPSCalculator.getNPS(generateDeliveries(1, 0, 0)));
+    Assert.assertEquals("Only promotors.", 100,
+        NPSCalculator.getNPS(DeliveryTest.generateDeliveries(1, 0, 0)));
     Assert.assertEquals("Only detractors.", -100,
-        NPSCalculator.getNPS(generateDeliveries(0, 0, 1)));
+        NPSCalculator.getNPS(DeliveryTest.generateDeliveries(0, 0, 1)));
     Assert.assertEquals("Equal amount of promoters/detractors.", 0,
-        NPSCalculator.getNPS(generateDeliveries(1, 0, 1)));
-    Assert.assertEquals("(2 - 1)/4 = 0.25.", 25, NPSCalculator.getNPS(generateDeliveries(2, 1, 1)));
+        NPSCalculator.getNPS(DeliveryTest.generateDeliveries(1, 0, 1)));
+    Assert.assertEquals("(2 - 1)/4 = 0.25.", 25,
+        NPSCalculator.getNPS(DeliveryTest.generateDeliveries(2, 1, 1)));
     Assert.assertEquals("Rounds from 14.285.", 14,
-        NPSCalculator.getNPS(generateDeliveries(3, 10, 1)));
+        NPSCalculator.getNPS(DeliveryTest.generateDeliveries(3, 10, 1)));
     Assert.assertEquals("Rounds from -23.077.", -23,
-        NPSCalculator.getNPS(generateDeliveries(5, 10, 11)));
+        NPSCalculator.getNPS(DeliveryTest.generateDeliveries(5, 10, 11)));
   }
 
 }
