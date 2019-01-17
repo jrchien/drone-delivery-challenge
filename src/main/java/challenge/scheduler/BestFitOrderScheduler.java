@@ -48,8 +48,8 @@ public final class BestFitOrderScheduler extends FifoOrderScheduler {
         engine.stream().limit(Limits.bySteadyFitness(minimumGeneration))
             .limit(minimumGeneration * 2).collect(EvolutionResult.toBestPhenotype());
 
-    return super.scheduleDeliveries(result.getGenotype().getChromosome().stream().map(EnumGene::getAllele)
-        .collect(Collectors.toList()));
+    return super.scheduleDeliveries(result.getGenotype().getChromosome().stream()
+        .map(EnumGene::getAllele).collect(Collectors.toList()));
   }
 
 }

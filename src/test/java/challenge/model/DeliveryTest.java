@@ -34,8 +34,7 @@ public class DeliveryTest {
   @Test
   public void testComparable() {
     Delivery delivery = new Delivery("Test", LocalTime.NOON, CustomerSatisfaction.PROMOTER);
-    Delivery differentRating =
-        new Delivery("Test", LocalTime.NOON, CustomerSatisfaction.NEUTRAL);
+    Delivery differentRating = new Delivery("Test", LocalTime.NOON, CustomerSatisfaction.NEUTRAL);
     Delivery laterTime =
         new Delivery("Test", LocalTime.NOON.plusMinutes(1), CustomerSatisfaction.PROMOTER);
     Delivery differentId = new Delivery("Test2", LocalTime.NOON, CustomerSatisfaction.PROMOTER);
