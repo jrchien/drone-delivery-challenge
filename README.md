@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jrchien/drone-delivery-challenge.svg?branch=master)](https://travis-ci.org/jrchien/drone-delivery-challenge)
+
 ### Assumptions
 
 * **ID Format (WM####):** The *Example Input File Rows* had the format as WM###, which contradicted the *Input Description*. Went with the *Input Description* format.
