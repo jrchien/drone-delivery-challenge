@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jrchien/drone-delivery-challenge.svg?branch=master)](https://travis-ci.org/jrchien/drone-delivery-challenge)
+[![Build Status](https://travis-ci.org/jrchien/drone-delivery-challenge.svg?branch=master)](https://travis-ci.org/jrchien/drone-delivery-challenge) [![Coverage Status](https://coveralls.io/repos/github/jrchien/drone-delivery-challenge/badge.svg?branch=master)](https://coveralls.io/github/jrchien/drone-delivery-challenge?branch=master)
 
 ### Assumptions
 
