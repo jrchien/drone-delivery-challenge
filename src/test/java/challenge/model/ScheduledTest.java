@@ -23,29 +23,43 @@ public class ScheduledTest {
     Assert.assertEquals("Expects order time to be value declared.", LocalTime.NOON,
         scheduled.getOrderTime());
     Assert.assertEquals("Expects transit to be the distance.", 15, scheduled.getTransitMinutes());
-    Assert.assertEquals("Expects neutral time.", LocalTime.of(13, 45),
-        scheduled.getNeutralTime());
+    Assert.assertEquals("Expects neutral time.", LocalTime.of(13, 45), scheduled.getNeutralTime());
     Assert.assertEquals("Expects detractor time.", LocalTime.of(15, 45),
         scheduled.getDetractorTime());
   }
 
   /**
-   * Tests order time comparison.
+   * Tests completion time. Checks to make sure there isn't wrap around.
+   */
+  @Test
+  public void testCompletionTime() {
+    Scheduled scheduled =
+        new Scheduled("Test", LocalTime.NOON, GridCoordinate.of(10, 5), GridCoordinate.ZERO);
+    LocalTime startTime = LocalTime.of(23, 30);
+
+    Assert.assertEquals("Limits to Max Time.", LocalTime.MAX,
+        scheduled.getCompletionTime(startTime));
+  }
+
+  /**
+   * Tests scheduled comparison.
    */
   @Test
   public void testComparable() {
     Scheduled scheduled =
         new Scheduled("Test", LocalTime.NOON, GridCoordinate.ZERO, GridCoordinate.ZERO);
-    Scheduled sameTime =
+    Scheduled differentLocation =
         new Scheduled("Test", LocalTime.NOON, GridCoordinate.of(5, 6), GridCoordinate.ZERO);
     Scheduled laterTime = new Scheduled("Test", LocalTime.NOON.plusMinutes(1), GridCoordinate.ZERO,
         GridCoordinate.ZERO);
-    Scheduled earlierTime = new Scheduled("Test", LocalTime.NOON.minusMinutes(1),
-        GridCoordinate.ZERO, GridCoordinate.ZERO);
+    Scheduled differentId =
+        new Scheduled("Test2", LocalTime.NOON, GridCoordinate.ZERO, GridCoordinate.ZERO);
 
-    Assert.assertEquals("Same time.", 0, scheduled.compareTo(sameTime));
+    Assert.assertEquals("Same time. Compares location.", -1,
+        scheduled.compareTo(differentLocation));
     Assert.assertEquals("Later time.", -1, scheduled.compareTo(laterTime));
-    Assert.assertEquals("Earlier time.", 1, scheduled.compareTo(earlierTime));
+    Assert.assertEquals("Same time and location. Compares ids.", -1,
+        scheduled.compareTo(differentId));
   }
 
   /**
@@ -83,8 +97,7 @@ public class ScheduledTest {
     Scheduled scheduled =
         new Scheduled("Test", LocalTime.NOON, GridCoordinate.ZERO, GridCoordinate.ZERO);
 
-    Assert.assertEquals(
-        "Scheduled [orderId=Test, orderTime=12:00, transitMinutes=0, detractorTime=16:00]",
+    Assert.assertEquals("Scheduled [orderId=Test, orderTime=12:00, transitMinutes=0]",
         scheduled.toString());
   }
 

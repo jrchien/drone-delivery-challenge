@@ -37,6 +37,19 @@ public class GridCoordinateTest {
     Assert.assertEquals("Expects distance to self to be 0.", 0,
         coordinate.getDistanceTo(coordinate));
   }
+  
+  /**
+   * Tests grid coordinate comparison. Comparison order: x, y.
+   */
+  @Test
+  public void testComparable() {
+    GridCoordinate coordinate = GridCoordinate.of(4, 5);
+    GridCoordinate differentY = GridCoordinate.of(4, 7);
+    GridCoordinate differentX = GridCoordinate.of(-5, 2);
+
+    Assert.assertEquals("Same x. Compares y.", -1, coordinate.compareTo(differentY));
+    Assert.assertEquals("Compares x.", 1, coordinate.compareTo(differentX));
+  }
 
   /**
    * Tests the equals method.

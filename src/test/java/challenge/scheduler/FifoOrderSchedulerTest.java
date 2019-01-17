@@ -71,7 +71,7 @@ public class FifoOrderSchedulerTest {
     Map<String, Integer> testInputMap = new HashMap<>();
     testInputMap.put("src/test/resources/test-input-1.txt", 50);
     testInputMap.put("src/test/resources/test-input-2.txt", -12);
-    testInputMap.put("src/test/resources/test-input-3.txt", 10);
+    testInputMap.put("src/test/resources/test-input-3.txt", 0);
 
     testInputMap.entrySet().stream().forEach(entry -> testFifo(entry.getKey(), entry.getValue()));
   }

@@ -1,6 +1,7 @@
 package challenge.model;
 
 import java.time.LocalTime;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import com.google.common.base.Preconditions;
 
 /**
@@ -54,9 +55,14 @@ public class Delivery implements Comparable<Delivery> {
     return rating;
   }
 
+  /**
+   * Comparison order: departure time, rating, id.
+   */
   @Override
   public int compareTo(Delivery other) {
-    return this.getDepartureTime().compareTo(other.getDepartureTime());
+    return new CompareToBuilder().append(getDepartureTime(), other.getDepartureTime())
+        .append(getRating(), other.getRating()).append(getOrderId(), other.getOrderId())
+        .toComparison();
   }
 
   @Override
@@ -88,7 +94,5 @@ public class Delivery implements Comparable<Delivery> {
     return "Delivery [orderId=" + orderId + ", departureTime=" + departureTime + ", rating="
         + rating + "]";
   }
-
-
 
 }
