@@ -26,6 +26,7 @@ test {
 
 jacoco {
 	toolVersion = '0.8.2'
+	reportsDir = file('build/reports/jacoco')
 }
 
 jacocoTestReport {
@@ -36,7 +37,7 @@ jacocoTestReport {
 }
 
 coveralls {
-	jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
+	jacocoReportPath 'build/reports/jacoco/test/jacocoTestReport.xml'
 }
 
 jar {
