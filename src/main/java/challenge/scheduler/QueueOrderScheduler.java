@@ -51,6 +51,7 @@ public class QueueOrderScheduler extends OrderScheduler {
           currentTime = updateQueue(completionTime, orderByTimeMap, queue);
         } else {
           deliveries.add(incompleteDelivery(scheduled.getOrderId()));
+          currentTime = updateQueue(currentTime, orderByTimeMap, queue);
         }
       }
     }

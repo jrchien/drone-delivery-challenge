@@ -1,11 +1,13 @@
 package challenge.model;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
+
 /**
  * Stores the grid x and y coordinates for a location.
  * 
  * @author jeffrey
  */
-public final class GridCoordinate {
+public final class GridCoordinate implements Comparable<GridCoordinate> {
 
   /**
    * The 0, 0 coordinate of the grid.
@@ -60,6 +62,15 @@ public final class GridCoordinate {
    */
   public static final GridCoordinate of(int x, int y) {
     return new GridCoordinate(x, y);
+  }
+
+  /**
+   * Comparison order: x, y.
+   */
+  @Override
+  public int compareTo(GridCoordinate other) {
+    return new CompareToBuilder().append(getX(), other.getX()).append(getY(), other.getY())
+        .toComparison();
   }
 
   @Override

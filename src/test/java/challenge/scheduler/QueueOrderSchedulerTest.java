@@ -47,7 +47,7 @@ public class QueueOrderSchedulerTest {
     Map<String, Integer> testInputMap = new HashMap<>();
     testInputMap.put("src/test/resources/test-input-1.txt", 75);
     testInputMap.put("src/test/resources/test-input-2.txt", 50);
-    testInputMap.put("src/test/resources/test-input-3.txt", 65);
+    testInputMap.put("src/test/resources/test-input-3.txt", 50);
 
     testInputMap.entrySet().stream()
         .forEach(entry -> testQueueBased(entry.getKey(), entry.getValue()));

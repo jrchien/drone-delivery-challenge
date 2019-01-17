@@ -1,6 +1,8 @@
 package challenge.model;
 
+import java.time.Duration;
 import java.time.LocalTime;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import com.google.common.base.Preconditions;
 import challenge.calculator.CustomerSatisfactionCalculator;
 
@@ -61,7 +63,12 @@ public class Scheduled implements Comparable<Scheduled> {
   }
 
   private LocalTime toRatingTime(CustomerSatisfaction rating) {
-    return orderTime.plusHours(rating.getMinimumHours()).minusMinutes(transitMinutes);
+    Duration duration = Duration.between(orderTime, LocalTime.MAX);
+    int ratingHours = rating.getMinimumHours();
+    if (duration.toHours() > ratingHours) {
+      return orderTime.plusHours(ratingHours).minusMinutes(transitMinutes);
+    }
+    return LocalTime.MAX;
   }
 
   /**
@@ -86,14 +93,14 @@ public class Scheduled implements Comparable<Scheduled> {
   }
 
   /**
-   * @return The latest time before an order becomes neutral.
+   * @return The latest time before an order becomes neutral. Limits to {@link LocalTime#MAX}.
    */
   public LocalTime getNeutralTime() {
     return neutralTime;
   }
 
   /**
-   * @return The latest time before an order becomes a detractor.
+   * @return The latest time before an order becomes a detractor. Limits to {@link LocalTime#MAX}.
    */
   public LocalTime getDetractorTime() {
     return detractorTime;
@@ -110,18 +117,28 @@ public class Scheduled implements Comparable<Scheduled> {
   }
 
   /**
-   * Adds the delivery and return times to the start time.
+   * Adds the delivery and return times to the start time. Limits to {@link LocalTime#MAX}.
    * 
    * @param startTime The start time.
    * @return The delivery completion time.
    */
   public LocalTime getCompletionTime(LocalTime startTime) {
-    return startTime.plusMinutes(transitMinutes * 2);
+    Duration duration = Duration.between(startTime, LocalTime.MAX);
+    int minutesToAdd = transitMinutes * 2;
+    if (duration.toMinutes() > minutesToAdd) {
+      return startTime.plusMinutes(minutesToAdd);
+    }
+    return LocalTime.MAX;
   }
 
+  /**
+   * Comparison order: order time, transit minutes, id.
+   */
   @Override
   public int compareTo(Scheduled other) {
-    return getOrderTime().compareTo(other.getOrderTime());
+    return new CompareToBuilder().append(getOrderTime(), other.getOrderTime())
+        .append(getTransitMinutes(), other.getTransitMinutes())
+        .append(getOrderId(), other.getOrderId()).toComparison();
   }
 
   @Override
@@ -136,9 +153,6 @@ public class Scheduled implements Comparable<Scheduled> {
       return false;
     }
     Scheduled other = (Scheduled) obj;
-    if (!detractorTime.equals(other.detractorTime)) {
-      return false;
-    }
     if (!orderId.equals(other.orderId)) {
       return false;
     }
@@ -154,7 +168,7 @@ public class Scheduled implements Comparable<Scheduled> {
   @Override
   public String toString() {
     return "Scheduled [orderId=" + orderId + ", orderTime=" + orderTime + ", transitMinutes="
-        + transitMinutes + ", detractorTime=" + detractorTime + "]";
+        + transitMinutes + "]";
   }
 
 }

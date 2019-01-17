@@ -29,6 +29,23 @@ public class DeliveryTest {
   }
 
   /**
+   * Tests delivery comparison.
+   */
+  @Test
+  public void testComparable() {
+    Delivery delivery = new Delivery("Test", LocalTime.NOON, CustomerSatisfaction.PROMOTER);
+    Delivery differentRating = new Delivery("Test", LocalTime.NOON, CustomerSatisfaction.NEUTRAL);
+    Delivery laterTime =
+        new Delivery("Test", LocalTime.NOON.plusMinutes(1), CustomerSatisfaction.PROMOTER);
+    Delivery differentId = new Delivery("Test2", LocalTime.NOON, CustomerSatisfaction.PROMOTER);
+
+    Assert.assertEquals("Same time. Compares location.", -1, delivery.compareTo(differentRating));
+    Assert.assertEquals("Later time.", -1, delivery.compareTo(laterTime));
+    Assert.assertEquals("Same time and location. Compares ids.", -1,
+        delivery.compareTo(differentId));
+  }
+
+  /**
    * Tests the equals method.
    */
   @SuppressWarnings("unlikely-arg-type")

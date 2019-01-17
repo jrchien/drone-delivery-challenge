@@ -1,6 +1,7 @@
 package challenge.model;
 
 import java.time.LocalTime;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import com.google.common.base.Preconditions;
 
 /**
@@ -54,9 +55,14 @@ public final class Order implements Comparable<Order> {
     return customerLocation;
   }
 
+  /**
+   * Comparison order: order time, customer location, id.
+   */
   @Override
   public int compareTo(Order other) {
-    return getOrderTime().compareTo(other.getOrderTime());
+    return new CompareToBuilder().append(getOrderTime(), other.getOrderTime())
+        .append(getCustomerLocation(), other.getCustomerLocation())
+        .append(getOrderId(), other.getOrderId()).toComparison();
   }
 
   @Override
