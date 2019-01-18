@@ -5,8 +5,7 @@ import java.util.function.Function;
 import com.google.common.base.Preconditions;
 import challenge.calculator.NPSCalculator;
 import challenge.model.GridCoordinate;
-import challenge.model.Order;
-import challenge.model.Scheduled;
+import challenge.model.Manifest;
 import challenge.scheduler.OrderScheduler;
 import challenge.scheduler.OrderSchedulers;
 import io.jenetics.EnumGene;
@@ -21,9 +20,9 @@ import io.jenetics.util.ISeq;
  * 
  * @author jeffrey
  */
-public class ScheduleProblem implements Problem<ISeq<Scheduled>, EnumGene<Scheduled>, Integer> {
+public class ScheduleProblem implements Problem<ISeq<Manifest>, EnumGene<Manifest>, Integer> {
 
-  private final ISeq<Scheduled> orderSequence;
+  private final ISeq<Manifest> manifestSequence;
 
   private final OrderScheduler orderScheduler;
 
@@ -31,24 +30,24 @@ public class ScheduleProblem implements Problem<ISeq<Scheduled>, EnumGene<Schedu
    * The constructor.
    * 
    * @param warehouseLocation The warehouse {@link GridCoordinate}. Cannot be <code>null</code>.
-   * @param orders The list of {@link Order}s used for generations. Cannot be <code>null</code>.
+   * @param manifests The {@link Manifest}s used for generations. Cannot be <code>null</code>.
    */
-  public ScheduleProblem(GridCoordinate warehouseLocation, List<Scheduled> orders) {
+  public ScheduleProblem(GridCoordinate warehouseLocation, List<Manifest> manifests) {
     Preconditions.checkNotNull(warehouseLocation, "Warehouse location cannot be null.");
-    Preconditions.checkNotNull(orders, "Orders cannot be null.");
+    Preconditions.checkNotNull(manifests, "Manifests cannot be null.");
 
     this.orderScheduler = OrderSchedulers.fifo(warehouseLocation);
-    this.orderSequence = ISeq.of(orders);
+    this.manifestSequence = ISeq.of(manifests);
   }
 
   @Override
-  public Function<ISeq<Scheduled>, Integer> fitness() {
-    return seq -> NPSCalculator.getNPS(orderScheduler.scheduleDeliveries(seq.asList()));
+  public Function<ISeq<Manifest>, Integer> fitness() {
+    return seq -> NPSCalculator.getNPS(orderScheduler.processManifests(seq.asList()));
   }
 
   @Override
-  public Codec<ISeq<Scheduled>, EnumGene<Scheduled>> codec() {
-    return Codecs.ofPermutation(orderSequence);
+  public Codec<ISeq<Manifest>, EnumGene<Manifest>> codec() {
+    return Codecs.ofPermutation(manifestSequence);
   }
 
 }

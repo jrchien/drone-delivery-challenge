@@ -6,12 +6,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NavigableMap;
 import com.google.common.collect.TreeMultimap;
-import challenge.comparator.ScheduledPriorityComparator;
+import challenge.comparator.ManifestPriorityComparator;
 import challenge.model.CustomerSatisfaction;
 import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
-import challenge.model.Order;
-import challenge.model.Scheduled;
+import challenge.model.Manifest;
 
 /**
  * Uses a sorted queue system to schedule orders.
@@ -31,62 +30,60 @@ public class QueueOrderScheduler extends OrderScheduler {
   }
 
   @Override
-  public List<Delivery> scheduleDeliveries(List<Scheduled> scheduledList) {
-    NavigableMap<LocalTime, Collection<Scheduled>> orderByTimeMap =
-        byOrderTime(scheduledList).asMap();
+  public List<Delivery> processManifests(List<Manifest> manifests) {
+    NavigableMap<LocalTime, Collection<Manifest>> orderByTimeMap = byOrderTime(manifests).asMap();
 
-    List<Scheduled> queue = new ArrayList<>();
+    List<Manifest> queue = new ArrayList<>();
     List<Delivery> deliveries = new ArrayList<>();
 
     LocalTime currentTime = updateQueue(getStartTime(), orderByTimeMap, queue);
     while (!queue.isEmpty()) {
-      Scheduled scheduled = queue.remove(0);
-      if (!scheduled.getOrderTime().isBefore(getEndTime())) {
-        deliveries.add(incompleteDelivery(scheduled.getOrderId()));
+      Manifest manifest = queue.remove(0);
+      if (!manifest.getOrderTime().isBefore(getEndTime())) {
+        deliveries.add(incompleteDelivery(manifest.getOrderId()));
       } else {
-        LocalTime completionTime = scheduled.getCompletionTime(currentTime);
+        LocalTime completionTime = manifest.getCompletionTime(currentTime);
         if (completionTime.isBefore(getEndTime())) {
-          CustomerSatisfaction rating = scheduled.getRating(currentTime);
-          deliveries.add(new Delivery(scheduled.getOrderId(), currentTime, rating));
-          currentTime = updateQueue(completionTime, orderByTimeMap, queue);
+          CustomerSatisfaction rating = manifest.getRating(currentTime);
+          deliveries.add(new Delivery(manifest.getOrderId(), currentTime, rating));
+          currentTime = completionTime;
         } else {
-          deliveries.add(incompleteDelivery(scheduled.getOrderId()));
-          currentTime = updateQueue(currentTime, orderByTimeMap, queue);
+          deliveries.add(incompleteDelivery(manifest.getOrderId()));
         }
+        currentTime = updateQueue(currentTime, orderByTimeMap, queue);
       }
     }
     return deliveries;
   }
 
   /**
-   * Updates the queue. Skips to the next order time if there isn't anything let in the queue.
+   * Updates the queue. Skips to the next order time if there isn't anything left in the queue.
    * 
    * @param currentTime The current time.
-   * @param orderByTimeMap The map of remaining orders.
-   * @param queue The {@link Order} queue.
+   * @param orderByTimeMap The map of remaining {@link Manifest}s.
+   * @param queue The {@link Manifest} queue.
    * @return The updated current time.
    */
   private LocalTime updateQueue(LocalTime currentTime,
-      NavigableMap<LocalTime, Collection<Scheduled>> orderByTimeMap, List<Scheduled> queue) {
+      NavigableMap<LocalTime, Collection<Manifest>> orderByTimeMap, List<Manifest> queue) {
     if (!orderByTimeMap.isEmpty()) {
       if (queue.isEmpty()) {
         currentTime = laterTime(currentTime, orderByTimeMap.firstKey());
       }
-      NavigableMap<LocalTime, Collection<Scheduled>> headMap =
+      NavigableMap<LocalTime, Collection<Manifest>> headMap =
           orderByTimeMap.headMap(currentTime, true);
       if (!headMap.isEmpty()) {
         headMap.values().stream().flatMap(Collection::stream).forEach(queue::add);
         headMap.clear();
-        queue.sort(new ScheduledPriorityComparator(currentTime));
+        queue.sort(new ManifestPriorityComparator(currentTime));
       }
     }
     return currentTime;
   }
 
-  private TreeMultimap<LocalTime, Scheduled> byOrderTime(List<Scheduled> scheduledList) {
-    TreeMultimap<LocalTime, Scheduled> byOrderTimeMap = TreeMultimap.create();
-    scheduledList.stream()
-        .forEach(scheduled -> byOrderTimeMap.put(scheduled.getOrderTime(), scheduled));
+  private TreeMultimap<LocalTime, Manifest> byOrderTime(List<Manifest> manifests) {
+    TreeMultimap<LocalTime, Manifest> byOrderTimeMap = TreeMultimap.create();
+    manifests.stream().forEach(manifest -> byOrderTimeMap.put(manifest.getOrderTime(), manifest));
     return byOrderTimeMap;
   }
 

@@ -7,7 +7,7 @@ import java.util.List;
 import challenge.model.CustomerSatisfaction;
 import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
-import challenge.model.Scheduled;
+import challenge.model.Manifest;
 
 /**
  * A basic {@link OrderScheduler} that schedules deliveries in the same order that the orders come
@@ -28,25 +28,25 @@ public class FifoOrderScheduler extends OrderScheduler {
   }
 
   @Override
-  public List<Delivery> scheduleDeliveries(List<Scheduled> scheduledList) {
+  public List<Delivery> processManifests(List<Manifest> manifests) {
     List<Delivery> deliveries = new ArrayList<>();
     List<Delivery> incomplete = new ArrayList<>();
 
     LocalTime currentTime = getStartTime();
-    Iterator<Scheduled> scheduledIterator = scheduledList.iterator();
-    while (scheduledIterator.hasNext()) {
-      Scheduled scheduled = scheduledIterator.next();
-      if (!scheduled.getOrderTime().isBefore(getEndTime())) {
-        incomplete.add(incompleteDelivery(scheduled.getOrderId()));
+    Iterator<Manifest> manifestIterator = manifests.iterator();
+    while (manifestIterator.hasNext()) {
+      Manifest manifest = manifestIterator.next();
+      if (!manifest.getOrderTime().isBefore(getEndTime())) {
+        incomplete.add(incompleteDelivery(manifest.getOrderId()));
       } else {
-        currentTime = laterTime(currentTime, scheduled.getOrderTime());
-        LocalTime completionTime = scheduled.getCompletionTime(currentTime);
+        currentTime = laterTime(currentTime, manifest.getOrderTime());
+        LocalTime completionTime = manifest.getCompletionTime(currentTime);
         if (!completionTime.isAfter(getEndTime())) {
-          CustomerSatisfaction rating = scheduled.getRating(currentTime);
-          deliveries.add(new Delivery(scheduled.getOrderId(), currentTime, rating));
+          CustomerSatisfaction rating = manifest.getRating(currentTime);
+          deliveries.add(new Delivery(manifest.getOrderId(), currentTime, rating));
           currentTime = completionTime;
         } else {
-          incomplete.add(incompleteDelivery(scheduled.getOrderId()));
+          incomplete.add(incompleteDelivery(manifest.getOrderId()));
         }
       }
     }
