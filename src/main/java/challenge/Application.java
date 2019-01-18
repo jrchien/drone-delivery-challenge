@@ -36,7 +36,7 @@ public final class Application {
     } else {
       List<Order> orders = OrderImporter.parseFile(args[0]);
       List<Delivery> deliveries = OrderSchedulers.queueBased().schedule(orders);
-      System.out.print(DeliveryExporter.exportToFile(deliveries));
+      System.out.println(DeliveryExporter.exportToFile(deliveries));
     }
   }
 
