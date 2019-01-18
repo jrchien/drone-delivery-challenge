@@ -14,9 +14,11 @@ import challenge.scheduler.OrderSchedulers;
  * 
  * @author jeffrey
  */
-public class Application {
+public final class Application {
 
   private static final Logger LOG = LoggerFactory.getLogger(Application.class);
+
+  private Application() {}
 
   /**
    * The main method.
@@ -29,14 +31,13 @@ public class Application {
    * @param args The program arguments.
    */
   public static void main(String[] args) {
-    if (args.length != 1) {
+    if (args == null || args.length != 1) {
       LOG.error("Expects file path.");
     } else {
       List<Order> orders = OrderImporter.parseFile(args[0]);
       List<Delivery> deliveries = OrderSchedulers.queueBased().schedule(orders);
-      System.out.println(DeliveryExporter.exportToFile(deliveries));
+      System.out.print(DeliveryExporter.exportToFile(deliveries));
     }
-    System.exit(1);
   }
 
 }

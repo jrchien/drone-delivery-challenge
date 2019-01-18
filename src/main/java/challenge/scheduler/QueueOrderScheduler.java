@@ -48,11 +48,11 @@ public class QueueOrderScheduler extends OrderScheduler {
         if (completionTime.isBefore(getEndTime())) {
           CustomerSatisfaction rating = scheduled.getRating(currentTime);
           deliveries.add(new Delivery(scheduled.getOrderId(), currentTime, rating));
-          currentTime = updateQueue(completionTime, orderByTimeMap, queue);
+          currentTime = completionTime;
         } else {
           deliveries.add(incompleteDelivery(scheduled.getOrderId()));
-          currentTime = updateQueue(currentTime, orderByTimeMap, queue);
         }
+        currentTime = updateQueue(currentTime, orderByTimeMap, queue);
       }
     }
     return deliveries;
