@@ -12,6 +12,11 @@ import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
 import challenge.model.Order;
 
+/**
+ * Test for {@link QueueOrderScheduler}.
+ * 
+ * @author jeffrey
+ */
 public class QueueOrderSchedulerTest {
 
   /**

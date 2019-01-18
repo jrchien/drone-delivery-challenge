@@ -29,7 +29,7 @@ public class OrderTest {
   }
 
   /**
-   * Tests order comparison.
+   * Tests {@link Order#compareTo}.
    */
   @Test
   public void testComparable() {

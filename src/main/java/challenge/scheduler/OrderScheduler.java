@@ -7,8 +7,8 @@ import com.google.common.base.Preconditions;
 import challenge.model.CustomerSatisfaction;
 import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
+import challenge.model.Manifest;
 import challenge.model.Order;
-import challenge.model.Scheduled;
 
 /**
  * Handles the scheduling of the {@link Order}s and conversion into {@link Delivery}.
@@ -35,8 +35,8 @@ public abstract class OrderScheduler {
   }
 
   /**
-   * Parses the orders into a scheduled list. If an order will not complete by the
-   * {@link OrderSchedulers#END_TIME}, creates an incomplete delivery entry.
+   * Parses the orders into a {@link Manifest} list for deliveries. If an order will not complete by
+   * the {@link OrderSchedulers#END_TIME}, creates an incomplete delivery entry.
    * 
    * @param orders The {@link Order} list. Cannot be <code>null</code> or empty.
    * @return The resulting {@link Delivery} list.
@@ -45,17 +45,17 @@ public abstract class OrderScheduler {
     Preconditions.checkNotNull(orders, "Orders cannot be null.");
     Preconditions.checkArgument(!orders.isEmpty(), "Orders cannot be empty.");
 
-    return scheduleDeliveries(orders.stream().map(order -> new Scheduled(order, warehouseLocation))
+    return processManifests(orders.stream().map(order -> new Manifest(order, warehouseLocation))
         .collect(Collectors.toList()));
   }
 
   /**
-   * Schedules the deliveries based on the {@link Scheduled} list.
+   * Schedules the deliveries based on the {@link Manifest} list.
    * 
-   * @param scheduledList The {@link Scheduled} list.
+   * @param manifests The {@link Manifest} list.
    * @return The resulting {@link Delivery} list.
    */
-  public abstract List<Delivery> scheduleDeliveries(List<Scheduled> scheduledList);
+  public abstract List<Delivery> processManifests(List<Manifest> manifests);
 
   /**
    * @return The warehouse {@link GridCoordinate} used to calculate distance. Cannot be

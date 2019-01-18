@@ -12,6 +12,11 @@ import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
 import challenge.model.Order;
 
+/**
+ * Tests for {@link BestFitOrderScheduler}.
+ * 
+ * @author jeffrey
+ */
 public class BestFitOrderSchedulerTest {
 
   /**

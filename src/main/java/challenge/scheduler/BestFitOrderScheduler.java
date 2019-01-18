@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import challenge.jenetics.ScheduleProblem;
 import challenge.model.Delivery;
 import challenge.model.GridCoordinate;
+import challenge.model.Manifest;
 import challenge.model.Order;
-import challenge.model.Scheduled;
 import io.jenetics.EnumGene;
 import io.jenetics.LinearRankSelector;
 import io.jenetics.Phenotype;
@@ -35,20 +35,20 @@ public final class BestFitOrderScheduler extends FifoOrderScheduler {
   }
 
   @Override
-  public List<Delivery> scheduleDeliveries(List<Scheduled> scheduledList) {
-    int minimumGeneration = MINIMUM_GENERATION_FACTOR * scheduledList.size();
-    ScheduleProblem scheduleProblem = new ScheduleProblem(getWarehouseLocation(), scheduledList);
+  public List<Delivery> processManifests(List<Manifest> manifests) {
+    int minimumGeneration = MINIMUM_GENERATION_FACTOR * manifests.size();
+    ScheduleProblem scheduleProblem = new ScheduleProblem(getWarehouseLocation(), manifests);
 
-    Engine<EnumGene<Scheduled>, Integer> engine =
+    Engine<EnumGene<Manifest>, Integer> engine =
         Engine.builder(scheduleProblem).executor(Executors.newCachedThreadPool()).maximizing()
             .offspringSelector(new LinearRankSelector<>())
             .survivorsSelector(new LinearRankSelector<>()).build();
 
-    Phenotype<EnumGene<Scheduled>, Integer> result =
+    Phenotype<EnumGene<Manifest>, Integer> result =
         engine.stream().limit(Limits.bySteadyFitness(minimumGeneration))
             .limit(minimumGeneration * 2).collect(EvolutionResult.toBestPhenotype());
 
-    return super.scheduleDeliveries(result.getGenotype().getChromosome().stream()
+    return super.processManifests(result.getGenotype().getChromosome().stream()
         .map(EnumGene::getAllele).collect(Collectors.toList()));
   }
 

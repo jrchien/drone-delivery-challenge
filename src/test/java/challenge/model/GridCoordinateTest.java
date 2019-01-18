@@ -39,7 +39,7 @@ public class GridCoordinateTest {
   }
 
   /**
-   * Tests grid coordinate comparison. Comparison order: x, y.
+   * Tests {@link GridCoordinate#compareTo}.
    */
   @Test
   public void testComparable() {

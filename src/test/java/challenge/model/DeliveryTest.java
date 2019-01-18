@@ -29,7 +29,7 @@ public class DeliveryTest {
   }
 
   /**
-   * Tests delivery comparison.
+   * Tests {@link Delivery#compareTo}.
    */
   @Test
   public void testComparable() {

@@ -19,6 +19,11 @@ import challenge.model.GridCoordinate;
 import challenge.model.Order;
 import challenge.model.OrderTest;
 
+/**
+ * Tests for {@link FifoOrderScheduler}.
+ * 
+ * @author jeffrey
+ */
 public class FifoOrderSchedulerTest {
 
   /**

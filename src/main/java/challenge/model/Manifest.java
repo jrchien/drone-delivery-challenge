@@ -11,7 +11,7 @@ import challenge.calculator.CustomerSatisfactionCalculator;
  * 
  * @author jeffrey
  */
-public class Scheduled implements Comparable<Scheduled> {
+public class Manifest implements Comparable<Manifest> {
 
   private final String orderId;
 
@@ -29,7 +29,7 @@ public class Scheduled implements Comparable<Scheduled> {
    * @param order The {@link Order}. Cannot be <code>null</code>.
    * @param warehouseLocation The warehouse {@link GridCoordinate}. Cannot be <code>null</code>.
    */
-  public Scheduled(Order order, GridCoordinate warehouseLocation) {
+  public Manifest(Order order, GridCoordinate warehouseLocation) {
     Preconditions.checkNotNull(order, "The order cannot be null.");
     Preconditions.checkNotNull(warehouseLocation, "The warehouse location cannot be null.");
 
@@ -48,7 +48,7 @@ public class Scheduled implements Comparable<Scheduled> {
    * @param customerLocation The grid-based location to deliver to. Cannot be <code>null</code>.
    * @param warehouseLocation The warehouse {@link GridCoordinate}. Cannot be <code>null</code>.
    */
-  public Scheduled(String orderId, LocalTime orderTime, GridCoordinate customerLocation,
+  public Manifest(String orderId, LocalTime orderTime, GridCoordinate customerLocation,
       GridCoordinate warehouseLocation) {
     Preconditions.checkNotNull(orderId, "The order id cannot be null.");
     Preconditions.checkNotNull(orderTime, "The order time cannot be null.");
@@ -135,7 +135,7 @@ public class Scheduled implements Comparable<Scheduled> {
    * Comparison order: order time, transit minutes, id.
    */
   @Override
-  public int compareTo(Scheduled other) {
+  public int compareTo(Manifest other) {
     return new CompareToBuilder().append(getOrderTime(), other.getOrderTime())
         .append(getTransitMinutes(), other.getTransitMinutes())
         .append(getOrderId(), other.getOrderId()).toComparison();
@@ -152,7 +152,7 @@ public class Scheduled implements Comparable<Scheduled> {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    Scheduled other = (Scheduled) obj;
+    Manifest other = (Manifest) obj;
     if (!orderId.equals(other.orderId)) {
       return false;
     }
@@ -167,7 +167,7 @@ public class Scheduled implements Comparable<Scheduled> {
 
   @Override
   public String toString() {
-    return "Scheduled [orderId=" + orderId + ", orderTime=" + orderTime + ", transitMinutes="
+    return "Manifest [orderId=" + orderId + ", orderTime=" + orderTime + ", transitMinutes="
         + transitMinutes + "]";
   }
 

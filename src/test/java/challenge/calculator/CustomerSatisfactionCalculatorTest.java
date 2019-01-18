@@ -5,8 +5,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import challenge.model.CustomerSatisfaction;
 
+/**
+ * Tests the {@link CustomerSatisfaction} calculation.
+ * 
+ * @author jeffrey
+ */
 public class CustomerSatisfactionCalculatorTest {
 
+  /**
+   * Calculates the {@link CustomerSatisfaction}.
+   */
   @Test
   public void testGetRating() {
     LocalTime orderTime = LocalTime.of(5, 11);
